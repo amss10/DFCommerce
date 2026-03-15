@@ -40,7 +40,9 @@ def add_to_cart(item: CartItemCreate, current_user: User = Depends(get_current_u
     return cart_item
 
 @router.put("/{item_id}", response_model=CartItemSchema)
-def update_cart_item(item_id: int, quantity: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def update_cart_item(item_id: int, quantity: int = None, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if quantity is None:
+        raise HTTPException(status_code=400, detail="Quantity parameter is required")
     cart_item = db.query(CartItem).filter(CartItem.id == item_id, CartItem.user_id == current_user.id).first()
     if not cart_item:
         raise HTTPException(status_code=404, detail="Cart item not found")

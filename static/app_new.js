@@ -36,7 +36,6 @@ const elements = {
     
     // Products
     productsGrid: document.getElementById('products-grid'),
-    categorySections: document.getElementById('category-sections'),
     searchInput: document.getElementById('search-input'),
     categorySelect: document.getElementById('category-select'),
     stockInput: document.getElementById('stock-input'),
@@ -239,149 +238,35 @@ async function loadCategories() {
     }
 }
 
-function setupCarouselListeners() {
-    // Carousel navigation
-    document.querySelectorAll('.carousel-nav').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const category = e.target.dataset.category;
-            const track = document.querySelector(`.carousel-track[data-category="${category}"]`);
-            
-            if (e.target.classList.contains('prev')) {
-                track.scrollBy({ left: -300, behavior: 'smooth' });
-            } else {
-                track.scrollBy({ left: 300, behavior: 'smooth' });
-            }
-        });
-    });
-}
-
 function renderProducts() {
-    // Show grid view if filters are active
-    const hasActiveFilters = state.filters.search || state.filters.category;
-    
-    if (hasActiveFilters) {
-        // Filtered view - show grid
-        elements.productsGrid.classList.remove('hidden');
-        elements.categorySections.innerHTML = '';
-        
-        elements.productsGrid.innerHTML = state.products.map(product => {
-            const isEmoji = product.image_url && product.image_url.length < 5 && /\p{Emoji}/u.test(product.image_url);
-            const imageHTML = isEmoji 
-                ? `<div style="font-size: 2.5rem; display: flex; align-items: center; justify-content: center; height: 100%;">${product.image_url}</div>`
-                : product.image_url 
-                ? `<img src="${product.image_url}" alt="${product.name}">`
-                : '📦';
-            
-            return `
-            <div class="product-card" data-product-id="${product.id}">
-                <div class="product-image">${imageHTML}</div>
-                <div class="product-info">
-                    <div class="product-category">${product.category}</div>
-                    <h3 class="product-name">${product.name}</h3>
-                    <p class="product-description">${product.description}</p>
-                    <div class="product-footer">
-                        <div>
-                            <div class="product-price">$${product.price.toFixed(2)}</div>
-                            <div class="product-stock ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}">
-                                ${product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
-                            </div>
+    elements.productsGrid.innerHTML = state.products.map(product => `
+        <div class="product-card" data-product-id="${product.id}">
+            <div class="product-image">${product.image_url ? `<img src="${product.image_url}" alt="${product.name}">` : '📦'}</div>
+            <div class="product-info">
+                <div class="product-category">${product.category}</div>
+                <h3 class="product-name">${product.name}</h3>
+                <p class="product-description">${product.description}</p>
+                <div class="product-footer">
+                    <div>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <div class="product-stock ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}">
+                            ${product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
                         </div>
-                        <button class="primary-button add-to-cart" data-product-id="${product.id}" ${product.stock === 0 ? 'disabled' : ''}>
-                            Add
-                        </button>
                     </div>
+                    <button class="primary-button add-to-cart" data-product-id="${product.id}" ${product.stock === 0 ? 'disabled' : ''}>
+                        Add
+                    </button>
                 </div>
             </div>
-        `;
-        }).join('');
-    } else {
-        // Browse view - show categories with carousels
-        elements.productsGrid.classList.add('hidden');
-        renderCategoryCarousels();
-    }
-    
+        </div>
+    `).join('');
+
     // Update stats
     elements.statsProducts.textContent = state.products.length;
     
     // Add event listeners
     document.querySelectorAll('.add-to-cart').forEach(btn => {
         btn.addEventListener('click', handleAddToCart);
-    });
-}
-
-function renderCategoryCarousels() {
-    // Group products by category
-    const categories = {};
-    
-    state.products.forEach(product => {
-        if (!categories[product.category]) {
-            categories[product.category] = [];
-        }
-        categories[product.category].push(product);
-    });
-    
-    // Create carousel for each category
-    let html = '';
-    
-    Object.entries(categories).forEach(([category, products]) => {
-        html += `
-            <div class="category-carousel-section">
-                <div class="carousel-header">
-                    <h2>${category}</h2>
-                    <a href="#" class="view-all" data-category="${category}">See All ></a>
-                </div>
-                <div class="carousel-container">
-                    <button class="carousel-nav prev" data-category="${category}">❮</button>
-                    <div class="carousel-track" data-category="${category}">
-                        ${products.map(product => {
-                            const isEmoji = product.image_url && product.image_url.length < 5 && /\p{Emoji}/u.test(product.image_url);
-                            const imageHTML = isEmoji 
-                                ? `<div style="font-size: 2rem; display: flex; align-items: center; justify-content: center; height: 100%;">${product.image_url}</div>`
-                                : product.image_url 
-                                ? `<img src="${product.image_url}" alt="${product.name}">`
-                                : '📦';
-                            return `
-                            <div class="carousel-item">
-                                <div class="carousel-product-card">
-                                    <div class="carousel-image">${imageHTML}</div>
-                                    <div class="carousel-product-info">
-                                        <h4 class="carousel-product-name" title="${product.name}">${product.name}</h4>
-                                        <div class="carousel-price">$${product.price.toFixed(2)}</div>
-                                        <div class="carousel-stock ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}">
-                                            ${product.stock > 0 ? '✓ In Stock' : 'Out of Stock'}
-                                        </div>
-                                        <button class="carousel-add-to-cart add-to-cart" data-product-id="${product.id}" ${product.stock === 0 ? 'disabled' : ''}>
-                                            Add to Cart
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        }).join('')}
-                    </div>
-                    <button class="carousel-nav next" data-category="${category}">❯</button>
-                </div>
-            </div>
-        `;
-    });
-    
-    elements.categorySections.innerHTML = html;
-    
-    // Add carousel event listeners
-    setupCarouselListeners();
-    
-    // Add "See All" category link listeners
-    document.querySelectorAll('.view-all').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const category = e.target.dataset.category;
-            state.filters.category = category;
-            state.filters.search = '';
-            elements.searchInput.value = '';
-            elements.categorySelect.value = category;
-            loadProducts();
-        });
     });
 }
 

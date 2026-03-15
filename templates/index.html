@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ app_title }}</title>
+    <title>{{ app_title }} - Premium E-Commerce Store</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -13,19 +13,19 @@
     <div class="page-shell">
         <header class="topbar">
             <a class="brand" href="#top">
-                <span class="brand-mark">DF</span>
+                <span class="brand-mark">🛍️</span>
                 <span>
-                    <strong>DFCommerce</strong>
-                    <small>Storefront + admin console</small>
+                    <strong>Premium Store</strong>
+                    <small>Quality Products Delivered</small>
                 </span>
             </a>
             <nav class="topnav">
                 <a href="#products-section">Shop</a>
-                <a href="#orders-section">Orders</a>
-                <a href="/docs" target="_blank" rel="noreferrer">API Docs</a>
+                <a href="#orders-section" id="orders-nav">Orders</a>
+                <a href="#" id="support-link">Support</a>
             </nav>
             <div class="session-bar">
-                <span id="session-status" class="session-status">Guest session</span>
+                <span id="session-status" class="session-status">Guest</span>
                 <button id="logout-button" class="ghost-button hidden" type="button">Log out</button>
             </div>
         </header>
@@ -33,189 +33,175 @@
         <main>
             <section class="hero" id="top">
                 <div class="hero-copy">
-                    <p class="eyebrow">FastAPI commerce system</p>
-                    <h1>Run the backend and use the product catalog like an actual application.</h1>
+                    <h1>Welcome to Our Store</h1>
                     <p class="hero-text">
-                        Browse inventory, register users, sign in, manage a cart, place orders, and if you log in as an admin, add products and update order status.
+                        Discover our carefully curated collection of premium products. Shop with confidence with secure checkout and fast delivery.
                     </p>
                     <div class="hero-actions">
-                        <a class="primary-button" href="#products-section">Browse products</a>
-                        <a class="ghost-button" href="#auth-section">Access account</a>
+                        <a class="primary-button" href="#products-section">Start Shopping</a>
+                        <a class="ghost-button" href="#auth-section">Sign In</a>
                     </div>
                     <div class="hero-stats" id="hero-stats">
                         <div>
                             <strong id="stat-products">0</strong>
-                            <span>products</span>
+                            <span>Products</span>
                         </div>
                         <div>
                             <strong id="stat-categories">0</strong>
-                            <span>categories</span>
+                            <span>Categories</span>
                         </div>
                         <div>
-                            <strong>24/7</strong>
-                            <span>API availability</span>
+                            <strong>✓</strong>
+                            <span>Secure Checkout</span>
                         </div>
                     </div>
-                </div>
-                <div class="hero-card">
-                    <p class="hero-card-title">Demo credentials</p>
-                    <div class="credential-grid">
-                        <div>
-                            <span>Admin</span>
-                            <strong>admin / admin1234</strong>
-                        </div>
-                        <div>
-                            <span>Demo user</span>
-                            <strong>demo / demo1234</strong>
-                        </div>
-                    </div>
-                    <p class="hero-card-note">Seeded data is already compatible with this UI.</p>
                 </div>
             </section>
 
-            <section class="content-grid">
-                <aside class="sidebar-stack">
-                    <section class="panel" id="auth-section">
-                        <div class="panel-header">
-                            <h2>Account</h2>
-                            <p>Register or sign in to unlock cart and order actions.</p>
-                        </div>
+            <!-- Auth Modal -->
+            <div id="auth-modal" class="modal hidden">
+                <div class="modal-content">
+                    <button class="modal-close" id="modal-close">&times;</button>
+                    <div id="auth-tabs" class="auth-tabs">
+                        <button class="tab-button active" data-tab="login">Sign In</button>
+                        <button class="tab-button" data-tab="register">Create Account</button>
+                    </div>
 
-                        <div id="auth-forms" class="auth-forms">
-                            <form id="login-form" class="stack-form">
-                                <h3>Login</h3>
-                                <label>
-                                    <span>Username</span>
-                                    <input name="username" type="text" autocomplete="username" required>
-                                </label>
-                                <label>
-                                    <span>Password</span>
-                                    <input name="password" type="password" autocomplete="current-password" required>
-                                </label>
-                                <button class="primary-button" type="submit">Sign in</button>
-                            </form>
-
-                            <form id="register-form" class="stack-form alt-form">
-                                <h3>Create account</h3>
-                                <label>
-                                    <span>Email</span>
-                                    <input name="email" type="email" autocomplete="email" required>
-                                </label>
-                                <label>
-                                    <span>Username</span>
-                                    <input name="username" type="text" autocomplete="username" required>
-                                </label>
-                                <label>
-                                    <span>Full name</span>
-                                    <input name="full_name" type="text" autocomplete="name" required>
-                                </label>
-                                <label>
-                                    <span>Password</span>
-                                    <input name="password" type="password" autocomplete="new-password" minlength="8" required>
-                                </label>
-                                <button class="secondary-button" type="submit">Register</button>
-                            </form>
-                        </div>
-
-                        <div id="account-summary" class="account-summary hidden"></div>
-                    </section>
-
-                    <section class="panel" id="cart-section">
-                        <div class="panel-header">
-                            <h2>Cart</h2>
-                            <p>Your selected items stay in sync with the API.</p>
-                        </div>
-                        <div id="cart-list" class="list-shell muted-state">Sign in to manage a cart.</div>
-                        <div class="panel-footer">
-                            <button id="clear-cart-button" class="ghost-button" type="button">Clear cart</button>
-                            <span id="cart-total">Total: $0.00</span>
-                            <button id="checkout-button" class="primary-button" type="button">Checkout cart</button>
-                        </div>
-                    </section>
-
-                    <section class="panel" id="orders-section">
-                        <div class="panel-header">
-                            <h2>Orders</h2>
-                            <p>Recent purchases and their status.</p>
-                        </div>
-                        <div id="orders-list" class="list-shell muted-state">Sign in to view orders.</div>
-                    </section>
-
-                    <section class="panel hidden" id="admin-panel">
-                        <div class="panel-header">
-                            <h2>Admin</h2>
-                            <p>Create products and update order statuses.</p>
-                        </div>
-
-                        <form id="product-form" class="stack-form compact-form">
-                            <h3>Add product</h3>
+                    <div id="login-tab" class="tab-content active">
+                        <form id="login-form" class="auth-form">
+                            <h2>Welcome Back</h2>
                             <label>
-                                <span>Name</span>
-                                <input name="name" type="text" required>
+                                <span>Username</span>
+                                <input name="username" type="text" autocomplete="username" required>
                             </label>
                             <label>
-                                <span>Description</span>
-                                <textarea name="description" rows="3" required></textarea>
+                                <span>Password</span>
+                                <input name="password" type="password" autocomplete="current-password" required>
                             </label>
-                            <div class="form-split">
-                                <label>
-                                    <span>Price</span>
-                                    <input name="price" type="number" min="0" step="0.01" required>
-                                </label>
-                                <label>
-                                    <span>Stock</span>
-                                    <input name="stock" type="number" min="0" step="1" required>
-                                </label>
-                            </div>
-                            <label>
-                                <span>Category</span>
-                                <input name="category" type="text" required>
-                            </label>
-                            <label>
-                                <span>Image URL</span>
-                                <input name="image_url" type="url">
-                            </label>
-                            <button class="secondary-button" type="submit">Create product</button>
+                            <button class="primary-button" type="submit">Sign In</button>
                         </form>
-
-                        <div>
-                            <h3 class="subheading">Manage products</h3>
-                            <div id="admin-products-list" class="list-shell muted-state">Admin access required.</div>
-                        </div>
-
-                        <div>
-                            <h3 class="subheading">All orders</h3>
-                            <div id="admin-orders-list" class="list-shell muted-state">Admin access required.</div>
-                        </div>
-                    </section>
-                </aside>
-
-                <section class="panel products-panel" id="products-section">
-                    <div class="panel-header">
-                        <h2>Product catalog</h2>
-                        <p>Filter products and add them straight into the cart.</p>
                     </div>
 
-                    <form id="filters-form" class="filters-row">
-                        <input id="search-input" name="search" type="search" placeholder="Search products or descriptions">
-                        <select id="category-select" name="category">
-                            <option value="">All categories</option>
-                        </select>
-                        <label class="checkbox-field">
-                            <input id="stock-input" name="in_stock" type="checkbox">
-                            <span>In stock only</span>
-                        </label>
-                        <button class="ghost-button" type="submit">Apply filters</button>
-                        <button id="clear-filters-button" class="ghost-button" type="button">Reset</button>
-                    </form>
+                    <div id="register-tab" class="tab-content">
+                        <form id="register-form" class="auth-form">
+                            <h2>Create Your Account</h2>
+                            <label>
+                                <span>Email</span>
+                                <input name="email" type="email" autocomplete="email" required>
+                            </label>
+                            <label>
+                                <span>Full Name</span>
+                                <input name="full_name" type="text" autocomplete="name" required>
+                            </label>
+                            <label>
+                                <span>Username</span>
+                                <input name="username" type="text" autocomplete="username" required>
+                            </label>
+                            <label>
+                                <span>Password</span>
+                                <input name="password" type="password" autocomplete="new-password" minlength="8" required>
+                            </label>
+                            <button class="primary-button" type="submit">Create Account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-                    <div id="products-grid" class="products-grid"></div>
-                </section>
+            <!-- Amazon-Style Products Section -->
+            <section class="products-section" id="products-section">
+                <div class="search-bar-container">
+                    <form id="filters-form" class="search-form">
+                        <input id="search-input" name="search" type="search" placeholder="Search products..." autocomplete="off">
+                        <button class="search-button" type="submit">Search</button>
+                    </form>
+                </div>
+
+                <div class="filters-container">
+                    <select id="category-select" name="category" class="category-filter">
+                        <option value="">All categories</option>
+                    </select>
+                    <label class="checkbox-field">
+                        <input id="stock-input" name="in_stock" type="checkbox">
+                        <span>In stock only</span>
+                    </label>
+                    <button class="filter-button" type="button" id="filter-apply">Apply</button>
+                    <button class="filter-button ghost" type="button" id="clear-filters-button">Reset</button>
+                </div>
+
+                <!-- Category Carousels (Amazon-style) -->
+                <div id="category-sections" class="category-sections"></div>
+
+                <!-- Grid View (Fallback) -->
+                <div id="products-grid" class="products-grid hidden"></div>
             </section>
+
+            <!-- Cart Sidebar -->
+            <aside class="cart-sidebar">
+                <div class="sidebar-section cart-panel">
+                    <h3>Shopping Cart</h3>
+                    <div id="cart-list" class="cart-items">
+                        <div class="empty-state">Your cart is empty</div>
+                    </div>
+                    <div class="cart-footer">
+                        <div class="cart-total">
+                            <span>Total:</span>
+                            <strong id="cart-total">$0.00</strong>
+                        </div>
+                        <button id="checkout-button" class="primary-button full-width" type="button" disabled>Proceed to Checkout</button>
+                        <button id="clear-cart-button" class="ghost-button full-width" type="button">Clear Cart</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-section orders-panel" id="orders-section">
+                    <h3>Your Orders</h3>
+                    <div id="orders-list" class="orders-items">
+                        <div class="empty-state">Sign in to view your orders</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section admin-panel hidden" id="admin-panel">
+                    <h3>Admin Dashboard</h3>
+                    <form id="product-form" class="admin-form">
+                        <h4>Add New Product</h4>
+                        <label>
+                            <span>Product Name</span>
+                            <input name="name" type="text" required>
+                        </label>
+                        <label>
+                            <span>Description</span>
+                            <textarea name="description" rows="3" required></textarea>
+                        </label>
+                        <div class="form-row">
+                            <label>
+                                <span>Price</span>
+                                <input name="price" type="number" min="0" step="0.01" required>
+                            </label>
+                            <label>
+                                <span>Stock</span>
+                                <input name="stock" type="number" min="0" step="1" required>
+                            </label>
+                        </div>
+                        <label>
+                            <span>Category</span>
+                            <input name="category" type="text" required>
+                        </label>
+                        <label>
+                            <span>Image URL</span>
+                            <input name="image_url" type="url">
+                        </label>
+                        <button class="secondary-button full-width" type="submit">Add Product</button>
+                    </form>
+                </div>
+            </aside>
         </main>
     </div>
 
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
     <div id="toast" class="toast hidden"></div>
+
     <script src="/static/app.js" defer></script>
 </body>
 </html>

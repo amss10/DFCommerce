@@ -5,6 +5,7 @@ from app.database.database import get_db
 from app.models.models import Product
 from app.schemas.schemas import Product as ProductSchema, ProductCreate, ProductUpdate
 from app.auth import get_current_admin
+from app.security import sanitize_input, validate_price, validate_quantity
 
 router = APIRouter(prefix="/products", tags=["products"])
 
