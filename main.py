@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from app.database.database import engine, Base
 from app.models.models import User, Product, CartItem, Order, OrderItem
-from app.routes import auth, products, cart, orders
+from app.routes import auth, products, cart, orders, admin
 import logging
 
 # Configure logging
@@ -42,6 +42,7 @@ app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(cart.router)
 app.include_router(orders.router)
+app.include_router(admin.router)
 
 
 @app.exception_handler(ValueError)
@@ -70,6 +71,16 @@ def read_root(request: Request):
         {
             "request": request,
             "app_title": "DFCommerce",
+        },
+    )
+
+@app.get("/admin", response_class=HTMLResponse)
+def read_admin(request: Request):
+    return templates.TemplateResponse(
+        "admin.html",
+        {
+            "request": request,
+            "app_title": "Admin Dashboard",
         },
     )
 

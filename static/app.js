@@ -32,6 +32,7 @@ const elements = {
     
     // Header
     sessionStatus: document.getElementById('session-status'),
+    adminButton: document.getElementById('admin-button'),
     logoutButton: document.getElementById('logout-button'),
     
     // Products
@@ -119,11 +120,11 @@ function updateSessionUI() {
     if (state.user) {
         elements.sessionStatus.textContent = state.user.username;
         elements.logoutButton.classList.remove('hidden');
-        elements.adminPanel.classList.toggle('hidden', !state.user.is_admin);
+        elements.adminButton.classList.toggle('hidden', !state.user.is_admin);
     } else {
         elements.sessionStatus.textContent = 'Guest';
         elements.logoutButton.classList.add('hidden');
-        elements.adminPanel.classList.add('hidden');
+        elements.adminButton.classList.add('hidden');
     }
 }
 
