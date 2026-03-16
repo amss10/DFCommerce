@@ -669,13 +669,14 @@
 
         // Check Authentication
         async function checkAuth() {
-            const auth = JSON.parse(localStorage.getItem('auth') || '{}');
-            token = auth.access_token;
+            const token = localStorage.getItem('dfcommerce_token');
             
             if (!token) {
                 window.location.href = '/';
                 return;
             }
+
+            token = token;
 
             try {
                 const response = await fetch('/auth/me', {
@@ -695,7 +696,7 @@
                 document.getElementById('user-name').textContent = currentUser.username;
                 document.getElementById('user-avatar').textContent = currentUser.username[0].toUpperCase();
             } catch {
-                localStorage.removeItem('auth');
+                localStorage.removeItem('dfcommerce_token');
                 window.location.href = '/';
             }
         }
@@ -1002,7 +1003,7 @@
         }
 
         function logout() {
-            localStorage.removeItem('auth');
+            localStorage.removeItem('dfcommerce_token');
             window.location.href = '/';
         }
     </script>

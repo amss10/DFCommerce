@@ -1,0 +1,27 @@
+<!-- Amazon-Style Products Section -->
+<section class="content-section" id="products-section">
+    <div class="search-bar-container">
+        <form id="filters-form" class="search-form">
+            <input id="search-input" name="search" type="search" placeholder="Search products..." autocomplete="off">
+            <button class="search-button" type="submit">Search</button>
+        </form>
+    </div>
+
+    <div class="filters-container">
+        <select id="category-select" name="category" class="category-filter">
+            <option value="">All categories</option>
+        </select>
+        <label class="checkbox-field">
+            <input id="stock-input" name="in_stock" type="checkbox">
+            <span>In stock only</span>
+        </label>
+        <button class="filter-button" type="button" id="filter-apply">Apply</button>
+        <button class="filter-button ghost" type="button" id="clear-filters-button">Reset</button>
+    </div>
+
+    <!-- Category Carousels (Amazon-style) -->
+    <div id="category-sections" class="category-sections"></div>
+
+    <!-- Grid View (Fallback) -->
+    <div id="products-grid" class="products-grid hidden"></div>
+</section>

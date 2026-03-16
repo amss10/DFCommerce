@@ -57,7 +57,7 @@ def get_admin_stats(admin: User = Depends(check_admin), db: Session = Depends(ge
     
     # Calculate total revenue
     all_orders = db.query(Order).all()
-    total_revenue = sum(order.total for order in all_orders) if all_orders else 0
+    total_revenue = sum(order.total_price for order in all_orders) if all_orders else 0
     
     # Count recent orders (last 30 days)
     from datetime import datetime, timedelta
@@ -155,7 +155,7 @@ def list_all_orders(admin: User = Depends(check_admin), db: Session = Depends(ge
         "id": order.id,
         "user_id": order.user_id,
         "username": order.user.username,
-        "total": order.total,
+        "total": order.total_price,
         "status": order.status,
         "created_at": order.created_at.isoformat()
     } for order in orders]
@@ -170,7 +170,7 @@ def get_order_details(order_id: int, admin: User = Depends(check_admin), db: Ses
         "id": order.id,
         "user_id": order.user_id,
         "username": order.user.username,
-        "total": order.total,
+        "total": order.total_price,
         "status": order.status,
         "created_at": order.created_at.isoformat(),
         "items": [{

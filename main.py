@@ -74,6 +74,36 @@ def read_root(request: Request):
         },
     )
 
+@app.get("/templates/{template_name}")
+async def get_template(template_name: str):
+    """Serve template files for dynamic loading"""
+    try:
+        # Validate template name to prevent directory traversal
+        if ".." in template_name or "/" in template_name:
+            return JSONResponse(
+                status_code=400,
+                content={"detail": "Invalid template name"}
+            )
+        
+        # Remove .html if it was included
+        if template_name.endswith('.html'):
+            template_name = template_name[:-5]
+        
+        with open(f"templates/{template_name}.html", "r") as f:
+            content = f.read()
+        return HTMLResponse(content=content)
+    except FileNotFoundError:
+        return JSONResponse(
+            status_code=404,
+            content={"detail": f"Template not found: {template_name}"}
+        )
+    except Exception as e:
+        logger.error(f"Error loading template: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Error loading template"}
+        )
+
 @app.get("/admin", response_class=HTMLResponse)
 def read_admin(request: Request):
     return templates.TemplateResponse(

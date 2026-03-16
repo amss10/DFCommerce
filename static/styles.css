@@ -220,6 +220,12 @@ main {
     color: var(--primary);
 }
 
+.topnav a.active {
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 2px;
+}
+
 .session-bar {
     display: flex;
     align-items: center;
@@ -356,6 +362,99 @@ main {
 
 .products-section {
     width: 100%;
+}
+
+.content-section {
+    width: 100%;
+    display: none;
+}
+
+.content-section.visible {
+    display: block;
+}
+
+.cart-container {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: var(--spacing-xl);
+}
+
+.cart-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.cart-item-details {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.cart-item-price {
+    font-weight: 600;
+    margin: 0 var(--spacing-lg);
+    min-width: 80px;
+    text-align: right;
+}
+
+.cart-item-remove {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    transition: all 0.2s;
+}
+
+.cart-item-remove:hover {
+    background: #fee;
+    color: #d32f2f;
+}
+
+.cart-summary {
+    position: sticky;
+    top: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    height: fit-content;
+}
+
+.cart-total-box {
+    margin-bottom: var(--spacing-lg);
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
 }
 
 .section-header {
@@ -1113,6 +1212,14 @@ main {
     
     .brand {
         flex: 1;
+    }
+
+    .cart-container {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-summary {
+        position: static;
     }
     
     h1 {

@@ -45,7 +45,7 @@ const elements = {
     clearFilters: document.getElementById('clear-filters-button'),
     
     // Cart
-    cartList: document.getElementById('cart-list'),
+    cartList: document.getElementById('cart-items-list'),
     cartTotal: document.getElementById('cart-total'),
     checkoutButton: document.getElementById('checkout-button'),
     clearCartButton: document.getElementById('clear-cart-button'),
@@ -413,7 +413,8 @@ async function handleAddToCart(e) {
         });
         
         await loadCart();
-        showToast('Added to cart!');
+        showToast('✓ Added to cart!');
+        // Stay on the same page - don't navigate to cart
     } catch (error) {
         console.error('Error adding to cart:', error);
     }
@@ -440,10 +441,13 @@ async function loadCart() {
 }
 
 function renderCart() {
+    const cartSection = document.getElementById('cart-section');
+    
     if (state.cart.length === 0) {
         elements.cartList.innerHTML = '<div class="empty-state">Your cart is empty</div>';
         elements.checkoutButton.disabled = true;
         elements.cartTotal.textContent = '$0.00';
+        document.getElementById('cart-subtotal').textContent = '$0.00';
         return;
     }
 
@@ -455,7 +459,7 @@ function renderCart() {
             <div class="cart-item">
                 <div class="cart-item-info">
                     <div class="cart-item-name">${item.product.name}</div>
-                    <div class="cart-item-details">Qty: ${item.quantity}</div>
+                    <div class="cart-item-details">Qty: ${item.quantity} × $${item.product.price.toFixed(2)}</div>
                 </div>
                 <div class="cart-item-price">$${itemTotal.toFixed(2)}</div>
                 <button class="cart-item-remove" data-item-id="${item.id}" title="Remove">×</button>
@@ -463,6 +467,7 @@ function renderCart() {
         `;
     }).join('');
 
+    document.getElementById('cart-subtotal').textContent = `$${total.toFixed(2)}`;
     elements.cartTotal.textContent = `$${total.toFixed(2)}`;
     elements.checkoutButton.disabled = false;
 
@@ -614,10 +619,51 @@ async function handleAddProduct(e) {
 // INITIALIZATION
 // ============================================
 
+async function loadTemplate(templateName) {
+    console.log(`Loading template: ${templateName}`);
+    try {
+        const response = await fetch(`/templates/${templateName}`);
+        if (!response.ok) {
+            throw new Error(`Failed to load template: ${templateName}`);
+        }
+        const html = await response.text();
+        return html;
+    } catch (error) {
+        console.error('Template load error:', error);
+        return '';
+    }
+}
+
 async function init() {
     // Load initial data
     await loadCategories();
     await loadProducts();
+    
+    // Load and render templates
+    const viewsContainer = document.getElementById('views-container');
+    const shopHTML = await loadTemplate('shop');
+    const cartHTML = await loadTemplate('cart');
+    const ordersHTML = await loadTemplate('orders');
+    
+    viewsContainer.innerHTML = shopHTML + cartHTML + ordersHTML;
+    
+    // Now update elements references since they're now loaded
+    elements.productsGrid = document.getElementById('products-grid');
+    elements.categorySections = document.getElementById('category-sections');
+    elements.searchInput = document.getElementById('search-input');
+    elements.categorySelect = document.getElementById('category-select');
+    elements.stockInput = document.getElementById('stock-input');
+    elements.filterApply = document.getElementById('filter-apply');
+    elements.clearFilters = document.getElementById('clear-filters-button');
+    elements.cartList = document.getElementById('cart-items-list');
+    elements.cartTotal = document.getElementById('cart-total');
+    elements.checkoutButton = document.getElementById('checkout-button');
+    elements.clearCartButton = document.getElementById('clear-cart-button');
+    elements.ordersList = document.getElementById('orders-list');
+    
+    // Re-render products now that the DOM is loaded
+    renderProducts();
+    renderCategories();
     
     // Restore session
     updateSessionUI();
@@ -625,6 +671,9 @@ async function init() {
         await loadCart();
         await loadOrders();
     }
+
+    // Show products section by default
+    showSection('products-section');
 
     // Event listeners - Auth
     elements.loginForm.addEventListener('submit', handleLogin);
@@ -655,34 +704,82 @@ async function init() {
     });
 
     // Event listeners - Filters
-    elements.filterApply.addEventListener('click', applyFilters);
-    elements.clearFilters.addEventListener('click', clearFiltersForm);
-    elements.searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            applyFilters();
-        }
-    });
+    if (elements.filterApply) elements.filterApply.addEventListener('click', applyFilters);
+    if (elements.clearFilters) elements.clearFilters.addEventListener('click', clearFiltersForm);
+    if (elements.searchInput) {
+        elements.searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
+    }
 
     // Event listeners - Cart
-    elements.clearCartButton.addEventListener('click', async () => {
-        if (confirm('Clear cart? This cannot be undone.')) {
-            try {
-                await apiCall('/cart/', {
-                    method: 'DELETE',
-                });
-                await loadCart();
-                showToast('Cart cleared');
-            } catch (error) {
-                console.error('Error clearing cart:', error);
+    if (elements.clearCartButton) {
+        elements.clearCartButton.addEventListener('click', async () => {
+            if (confirm('Clear cart? This cannot be undone.')) {
+                try {
+                    await apiCall('/cart/', {
+                        method: 'DELETE',
+                    });
+                    await loadCart();
+                    showToast('Cart cleared');
+                } catch (error) {
+                    console.error('Error clearing cart:', error);
+                }
             }
-        }
-    });
+        });
+    }
     
-    elements.checkoutButton.addEventListener('click', handleCheckout);
+    if (elements.checkoutButton) {
+        elements.checkoutButton.addEventListener('click', handleCheckout);
+    }
 
     // Event listeners - Admin
     if (elements.productForm) {
         elements.productForm.addEventListener('submit', handleAddProduct);
+    }
+}
+
+function showSection(sectionId) {
+    console.log(`showSection called: ${sectionId}`);
+    
+    // Update active nav link
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Find and highlight the active nav link
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        if (link.textContent.toLowerCase().includes('shop') && sectionId === 'products-section') {
+            link.classList.add('active');
+        } else if (link.textContent.includes('Cart') && sectionId === 'cart-section') {
+            link.classList.add('active');
+        } else if (link.textContent.includes('Orders') && sectionId === 'orders-section') {
+            link.classList.add('active');
+        }
+    });
+    
+    // Log all available sections
+    const allSections = document.querySelectorAll('.content-section');
+    console.log(`Available sections: ${Array.from(allSections).map(s => s.id).join(', ')}`);
+    
+    // Hide all content sections
+    allSections.forEach(section => {
+        section.style.display = 'none';
+        console.log(`Hiding: ${section.id}`);
+    });
+    
+    // Show the requested section
+    const section = document.getElementById(sectionId);
+    console.log(`Looking for: ${sectionId}, Found:`, section);
+    
+    if (section) {
+        section.style.display = 'block';
+        console.log(`✓ Displayed: ${sectionId}`);
+    } else {
+        console.error(`✗ Section not found: ${sectionId}`);
     }
 }
 

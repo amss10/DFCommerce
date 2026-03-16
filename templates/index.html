@@ -20,8 +20,9 @@
                 </span>
             </a>
             <nav class="topnav">
-                <a href="#products-section">Shop</a>
-                <a href="#orders-section" id="orders-nav">Orders</a>
+                <a href="#" class="nav-link active" onclick="showSection('products-section'); return false;">Shop</a>
+                <a href="#" class="nav-link" onclick="showSection('cart-section'); return false;">🛒 Cart</a>
+                <a href="#" class="nav-link" onclick="showSection('orders-section'); return false;">Orders</a>
                 <a href="#" id="support-link">Support</a>
             </nav>
             <div class="session-bar">
@@ -108,95 +109,8 @@
                 </div>
             </div>
 
-            <!-- Amazon-Style Products Section -->
-            <section class="products-section" id="products-section">
-                <div class="search-bar-container">
-                    <form id="filters-form" class="search-form">
-                        <input id="search-input" name="search" type="search" placeholder="Search products..." autocomplete="off">
-                        <button class="search-button" type="submit">Search</button>
-                    </form>
-                </div>
-
-                <div class="filters-container">
-                    <select id="category-select" name="category" class="category-filter">
-                        <option value="">All categories</option>
-                    </select>
-                    <label class="checkbox-field">
-                        <input id="stock-input" name="in_stock" type="checkbox">
-                        <span>In stock only</span>
-                    </label>
-                    <button class="filter-button" type="button" id="filter-apply">Apply</button>
-                    <button class="filter-button ghost" type="button" id="clear-filters-button">Reset</button>
-                </div>
-
-                <!-- Category Carousels (Amazon-style) -->
-                <div id="category-sections" class="category-sections"></div>
-
-                <!-- Grid View (Fallback) -->
-                <div id="products-grid" class="products-grid hidden"></div>
-            </section>
-
-            <!-- Cart Sidebar -->
-            <aside class="cart-sidebar">
-                <div class="sidebar-section cart-panel">
-                    <h3>Shopping Cart</h3>
-                    <div id="cart-list" class="cart-items">
-                        <div class="empty-state">Your cart is empty</div>
-                    </div>
-                    <div class="cart-footer">
-                        <div class="cart-total">
-                            <span>Total:</span>
-                            <strong id="cart-total">$0.00</strong>
-                        </div>
-                        <button id="checkout-button" class="primary-button full-width" type="button" disabled>Proceed to Checkout</button>
-                        <button id="clear-cart-button" class="ghost-button full-width" type="button">Clear Cart</button>
-                    </div>
-                </div>
-
-                <div class="sidebar-section orders-panel" id="orders-section">
-                    <h3>Your Orders</h3>
-                    <div id="orders-list" class="orders-items">
-                        <div class="empty-state">Sign in to view your orders</div>
-                    </div>
-                </div>
-
-                <div class="sidebar-section admin-panel hidden" id="admin-panel">
-                    <h3>Admin Dashboard</h3>
-                    <form id="product-form" class="admin-form">
-                        <h4>Add New Product</h4>
-                        <label>
-                            <span>Product Name</span>
-                            <input name="name" type="text" required>
-                        </label>
-                        <label>
-                            <span>Description</span>
-                            <textarea name="description" rows="3" required></textarea>
-                        </label>
-                        <div class="form-row">
-                            <label>
-                                <span>Price</span>
-                                <input name="price" type="number" min="0" step="0.01" required>
-                            </label>
-                            <label>
-                                <span>Stock</span>
-                                <input name="stock" type="number" min="0" step="1" required>
-                            </label>
-                        </div>
-                        <label>
-                            <span>Category</span>
-                            <input name="category" type="text" required>
-                        </label>
-                        <label>
-                            <span>Image URL</span>
-                            <input name="image_url" type="url">
-                        </label>
-                        <button class="secondary-button full-width" type="submit">Add Product</button>
-                    </form>
-                </div>
-            </aside>
-        </main>
-    </div>
-
+            <!-- Content Views Container -->
+            <div id="views-container"></div>
         </main>
     </div>
 
